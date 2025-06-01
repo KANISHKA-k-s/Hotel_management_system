@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotel Management System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>🏨 Hotel Management System</h1>
+      <p>Comprehensive hotel reservation and billing management</p>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showSection('dashboard', event)">Dashboard</button>
+      <button class="nav-tab" onclick="showSection('add-reservation', event)">Add Reservation</button>
+      <button class="nav-tab" onclick="showSection('view-reservations', event)">View Reservations</button>
+      <button class="nav-tab" onclick="showSection('reports', event)">Reports</button>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="content-section active">
+      <h2>Dashboard Overview</h2>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number" id="totalReservations">0</div><div class="stat-label">Total Reservations</div></div>
+        <div class="stat-card"><div class="stat-number" id="activeReservations">0</div><div class="stat-label">Active Reservations</div></div>
+        <div class="stat-card"><div class="stat-number" id="totalRevenue">$0</div><div class="stat-label">Total Revenue</div></div>
+        <div class="stat-card"><div class="stat-number" id="occupancyRate">0%</div><div class="stat-label">Occupancy Rate</div></div>
+      </div>
+
+      <h3>Recent Reservations</h3>
+      <div class="table-container">
+        <table id="recentReservationsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer Name</th>
+              <th>Room Number</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Total Amount</th>
+            </tr>
+          </thead>
+          <tbody id="recentReservationsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Reservation Section -->
+    <div id="add-reservation" class="content-section">
+      <h2>Add New Reservation</h2>
+      <div class="success-message" id="addSuccessMessage"></div>
+      <form id="addReservationForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="customerName">Customer Name *</label>
+            <input type="text" id="customerName" name="customerName" required>
+            <div class="error-message" id="customerNameError"></div>
+          </div>
+          <div class="form-group">
+            <label for="roomNumber">Room Number *</label>
+            <select id="roomNumber" name="roomNumber" required>
+              <option value="">Select Room</option>
+            </select>
+            <div class="error-message" id="roomNumberError"></div>
+          </div>
+          <div class="form-group">
+            <label for="checkInDate">Check-in Date *</label>
+            <input type="date" id="checkInDate" name="checkInDate" required>
+            <div class="error-message" id="checkInDateError"></div>
+          </div>
+          <div class="form-group">
+            <label for="checkOutDate">Check-out Date *</label>
+            <input type="date" id="checkOutDate" name="checkOutDate" required>
+            <div class="error-message" id="checkOutDateError"></div>
+          </div>
+          <div class="form-group">
+            <label for="totalAmount">Total Amount *</label>
+            <input type="number" id="totalAmount" name="totalAmount" step="0.01" min="0" required>
+            <div class="error-message" id="totalAmountError"></div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Reservation</button>
+        <button type="reset" class="btn btn-secondary">Clear Form</button>
+      </form>
+    </div>
+
+    <!-- View Reservations Section -->
+    <div id="view-reservations" class="content-section">
+      <h2>Manage Reservations</h2>
+      <div class="success-message" id="manageSuccessMessage"></div>
+      <div class="form-group" style="max-width: 300px; margin-bottom: 20px;">
+        <label for="searchReservation">Search Reservations</label>
+        <input type="text" id="searchReservation" placeholder="Search by name, room, or ID...">
+      </div>
+      <div class="table-container">
+        <table id="reservationsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer Name</th>
+              <th>Room Number</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Total Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reservationsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reports Section -->
+    <div id="reports" class="content-section">
+      <h2>Reports & Analytics</h2>
+      <div class="report-filters">
+        <h3>Report Filters</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="reportType">Report Type</label>
+            <select id="reportType" onchange="updateReportForm()">
+              <option value="date-range">Reservations by Date Range</option>
+              <option value="room-frequency">Most Booked Rooms</option>
+              <option value="revenue">Revenue Report</option>
+              <option value="customer">Customer Report</option>
+            </select>
+          </div>
+          <div class="form-group" id="startDateGroup">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate">
+          </div>
+          <div class="form-group" id="endDateGroup">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate">
+          </div>
+        </div>
+        <button onclick="generateReport()" class="btn btn-primary">Generate Report</button>
+        <button onclick="exportReport()" class="btn btn-success">Export to CSV</button>
+      </div>
+      <div class="loading" id="reportLoading">
+        <div class="spinner"></div>
+        <p>Generating report...</p>
+      </div>
+      <div id="reportResults">
+        <div class="table-container">
+          <table id="reportTable">
+            <thead id="reportTableHead"></thead>
+            <tbody id="reportTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Reservation Modal -->
+  <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px;">
+      <h3>Edit Reservation</h3>
+      <form id="editReservationForm">
+        <input type="hidden" id="editReservationId">
+        <div class="form-group">
+          <label for="editCustomerName">Customer Name *</label>
+          <input type="text" id="editCustomerName" required>
+        </div>
+        <div class="form-group">
+          <label for="editRoomNumber">Room Number *</label>
+          <select id="editRoomNumber" required>
+            <option value="">Select Room</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editCheckInDate">Check-in Date *</label>
+          <input type="date" id="editCheckInDate" required>
+        </div>
+        <div class="form-group">
+          <label for="editCheckOutDate">Check-out Date *</label>
+          <input type="date" id="editCheckOutDate" required>
+        </div>
+        <div class="form-group">
+          <label for="editTotalAmount">Total Amount *</label>
+          <input type="number" id="editTotalAmount" step="0.01" min="0" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Reservation</button>
+        <button type="button" onclick="closeEditModal()" class="btn btn-secondary">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
